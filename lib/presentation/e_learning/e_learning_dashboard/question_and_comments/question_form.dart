@@ -123,7 +123,7 @@ class QuestionFormPageScaffold extends StatefulWidget {
 }
 
 class _QuestionFormPageScaffoldState extends State<QuestionFormPageScaffold> {
-  File? questionImage;
+  File? selectedFile;
   FilePickerResult? file;
 
   @override
@@ -155,7 +155,7 @@ class _QuestionFormPageScaffoldState extends State<QuestionFormPageScaffold> {
                   const SizedBox(height: 16),
                   const QuestionDiscreptionField(),
                   InkWell(
-                    onTap: pickQuestionImage,
+                    onTap: pickQuestionFile,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: Container(
@@ -163,10 +163,25 @@ class _QuestionFormPageScaffoldState extends State<QuestionFormPageScaffold> {
                         width: double.maxFinite,
                         height: 300,
                         child: Center(
-                          child: questionImage == null
-                              ? const Text('Pick Question Image')
-                              : Image(
-                                  image: FileImage(questionImage!),
+                          child: selectedFile == null
+                              ? const Text('Pick Question File')
+                              : Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.insert_drive_file,
+                                      size: 100,
+                                      color: Colors.grey,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      selectedFile!.path.split('/').last,
+                                      textAlign: TextAlign.center,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
+                                    ),
+                                  ],
                                 ),
                         ),
                       ),
@@ -177,7 +192,7 @@ class _QuestionFormPageScaffoldState extends State<QuestionFormPageScaffold> {
                     onPressed: () {
                       context.read<AddQuestionFormBloc>().add(
                             AddQuestionFormEvent.addQuestionPressed(
-                              questionImage,
+                              selectedFile,
                               state.question,
                             ),
                           );
@@ -188,7 +203,7 @@ class _QuestionFormPageScaffoldState extends State<QuestionFormPageScaffold> {
                       builder: (context, state) {
                         return Text(
                           state.isEditing
-                              ? "Done   (you can't edit image)"
+                              ? "Done   (you can't edit file)"
                               : 'Raise Your Doubt',
                           style: Theme.of(context)
                               .textTheme
@@ -208,20 +223,15 @@ class _QuestionFormPageScaffoldState extends State<QuestionFormPageScaffold> {
     );
   }
 
-  Future<void> pickQuestionImage() async {
-    file = await FilePicker.platform.pickFiles();
+  Future<void> pickQuestionFile() async {
+    file = await FilePicker.platform.pickFiles(
+      type: FileType.any,
+    );
 
     if (file != null) {
       setState(() {
-        if (Platform.isAndroid || Platform.isIOS) {
-          // For mobile platforms, use the path property
-          questionImage = File(file!.files.single.path!);
-        } else {
-          // For web platform, use the bytes property
-          final bytes = file!.files.single.bytes;
-          questionImage = bytes != null ? File.fromRawPath(bytes) : null;
-        }
-        debugPrint('Image is selected: $questionImage');
+        selectedFile = File(file!.files.single.path!);
+        debugPrint('File is selected: $selectedFile');
       });
     }
   }

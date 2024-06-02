@@ -16,6 +16,7 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:path/path.dart' as path;
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:selectable_autolink_text/selectable_autolink_text.dart';
 import 'package:share/share.dart';
@@ -152,7 +153,6 @@ class _UsersQuestionsState extends State<UsersQuestions> {
                               ),
                             ],
                           ),
-
                           SizedBox(height: 10.h),
                           SelectableAutoLinkText(
                             state.questions
@@ -180,38 +180,8 @@ class _UsersQuestionsState extends State<UsersQuestions> {
                             },
                           ),
                           SizedBox(height: toppadding - 10),
-                          // ignore: prefer_if_elements_to_conditional_expressions
-                          state.questions
-                                      .get(index)
-                                      .mediaUrl
-                                      .getorCrash()
-                                      .length >
-                                  5
-                              ? CachedNetworkImage(
-                                  imageUrl: state.questions
-                                      .get(index)
-                                      .mediaUrl
-                                      .getorCrash(),
-                                  imageBuilder: (context, imageProvider) =>
-                                      Container(
-                                    height: .3.sh,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      image: DecorationImage(
-                                        image: imageProvider,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                  placeholder: (context, url) =>
-                                      SpinKitDoubleBounce(
-                                    color: Apptheme.secondaryColor,
-                                    size: .05.sh,
-                                  ),
-                                  errorWidget: (context, url, error) =>
-                                      const Icon(Icons.error),
-                                )
-                              : const SizedBox(),
+                          _buildFileWidget(
+                              state.questions.get(index).mediaUrl.getorCrash()),
                           SizedBox(height: 10.h),
                           Row(
                             children: [
@@ -338,5 +308,99 @@ class _UsersQuestionsState extends State<UsersQuestions> {
         );
       },
     );
+  }
+
+  Widget _buildFileWidget(String mediaUrl) {
+    final fileName = _extractFileName(mediaUrl);
+    final isImage = _isImage(mediaUrl);
+
+    return GestureDetector(
+      onTap: () {
+        _downloadFile(mediaUrl);
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (isImage)
+            CachedNetworkImage(
+              imageUrl: mediaUrl,
+              imageBuilder: (context, imageProvider) => Container(
+                height: .3.sh,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  image: DecorationImage(
+                    image: imageProvider,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              placeholder: (context, url) => SpinKitDoubleBounce(
+                color: Apptheme.secondaryColor,
+                size: .05.sh,
+              ),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+            )
+          else
+            const SizedBox(),
+          Row(
+            children: [
+              Icon(
+                isImage ? Icons.image : Icons.insert_drive_file,
+                color: Apptheme.primaryColor,
+              ),
+              SizedBox(width: 5.w),
+              Text(
+                fileName,
+                style: Apptheme(context).normalText.copyWith(
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w300,
+                    ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _downloadFile(String url) async {
+    if (await canLaunch(url)) {
+      print(url + '111111111111111111111111111111111111111111111111111');
+      await launch(url);
+    } else {
+      print('Could not launch $url');
+    }
+  }
+
+  bool _isImage(String url) {
+    final imageExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+    final extension = url.split('.').last;
+    return imageExtensions.contains(extension);
+  }
+
+  String _extractFileName(String mediaUrl) {
+    try {
+      // Split the URL by '%2F' to get segments
+      List<String> segments = mediaUrl.split('%2F');
+
+      // Find the last segment containing the file name
+      String fileNameSegment = segments.last;
+
+      // Remove additional characters such as '.jpg?alt=media&token=...'
+      // to get only the file name
+      int jpgIndex = fileNameSegment.indexOf('?alt');
+      if (jpgIndex != -1) {
+        fileNameSegment = fileNameSegment.substring(0, jpgIndex);
+      }
+
+      // Decode the file name
+      String fileName =
+          Uri.decodeComponent(fileNameSegment.replaceAll("'", ''));
+
+      return fileName;
+    } catch (e) {
+      print('Error extracting file name: $e');
+      return 'Unknown File';
+    }
   }
 }

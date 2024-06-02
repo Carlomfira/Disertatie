@@ -345,7 +345,7 @@ class ElearningRepository implements IElearningRepository {
     try {
       final storage.UploadTask uploadTask = storage.FirebaseStorage.instance
           .ref('questions')
-          .child("questionImage/questionImage_$questionImage.jpg")
+          .child("questionImage/questionImage_$questionImage")
           .putFile(questionImage);
 
       final storage.TaskSnapshot taskSnapshot =

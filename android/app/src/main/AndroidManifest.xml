@@ -21,7 +21,7 @@
     </queries>
      
    <application
-        android:label="academic_master"
+        android:label="Link Learn"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

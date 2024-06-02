@@ -1,16 +1,15 @@
 import 'package:academic_master/domain/core/failures.dart';
 import 'package:academic_master/domain/core/value_objects.dart';
 import "package:academic_master/domain/e_learning/value_objects.dart";
-
 import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+
 part "question.freezed.dart";
 
 @freezed
 abstract class Question implements _$Question {
   const Question._();
 
-  // ignore: sort_unnamed_constructors_first
   const factory Question({
     required UniqueId questionId,
     required UniqueId userId,
@@ -23,7 +22,7 @@ abstract class Question implements _$Question {
         questionDescription: QuestionDescription(" "),
         questionId: UniqueId(),
         userId: UniqueId(),
-        mediaUrl: MediaUrl("initalurl"),
+        mediaUrl: MediaUrl("initialurl"),
         askAt: Time(""),
       );
 
