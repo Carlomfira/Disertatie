@@ -34,7 +34,7 @@ class _RegisterFormState extends State<RegisterForm> {
   TextEditingController email = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
-  late String finalCourse = "btech";
+  late String finalCourse = "ENGINEERING";
   late String finalBranch = "cse";
   late String finalYear = "firstYear";
 
@@ -265,7 +265,7 @@ class _RegisterFormState extends State<RegisterForm> {
                                       dpharmaCircleColor =
                                           Apptheme.secondaryColor;
 
-                                      finalCourse = "btech";
+                                      finalCourse = "ENGINEERING";
                                     });
                                   },
                                   onDoubleTap: () {
@@ -276,7 +276,7 @@ class _RegisterFormState extends State<RegisterForm> {
                                     });
                                   },
                                   child: mycircle(
-                                    "BTECH",
+                                    "ENGINEERING",
                                     btechCircleHeight,
                                     btechCircleColor,
                                   ),
@@ -299,7 +299,7 @@ class _RegisterFormState extends State<RegisterForm> {
                                       dpharmaCircleColor =
                                           Apptheme.secondaryColor;
 
-                                      finalCourse = "bpharma";
+                                      finalCourse = "MATH";
                                     });
                                   },
                                   onDoubleTap: () {
@@ -314,7 +314,7 @@ class _RegisterFormState extends State<RegisterForm> {
                                       top: 38.0,
                                     ),
                                     child: mycircle(
-                                      "BPHARMA",
+                                      "MATH",
                                       bpharmaCircleHeight,
                                       bpharmaCircleColor,
                                     ),
@@ -335,7 +335,7 @@ class _RegisterFormState extends State<RegisterForm> {
                                 btechCircleColor = Apptheme.secondaryColor;
                                 bpharmaCircleColor = Apptheme.secondaryColor;
 
-                                finalCourse = "dpharma";
+                                finalCourse = "COMPUTER-SCIENCE";
                               });
                             },
                             onDoubleTap: () {
@@ -345,7 +345,7 @@ class _RegisterFormState extends State<RegisterForm> {
                               });
                             },
                             child: mycircle(
-                              "DPHARMA",
+                              "COMPUTER-SCIENCE",
                               dpharmaCircleHeight,
                               dpharmaCircleColor,
                             ),
@@ -638,8 +638,8 @@ class _RegisterFormState extends State<RegisterForm> {
                       subtitle: const Text("STEP 4"),
                       content: Column(
                         children: [
-                          if (finalCourse == "btech" ||
-                              finalCourse == "bpharma")
+                          if (finalCourse == "ENGINEERING" ||
+                              finalCourse == "COMPUTER-SCIENCE")
                             Column(
                               children: [
                                 Row(
@@ -952,22 +952,22 @@ class _RegisterFormState extends State<RegisterForm> {
       } else {
         if (_currentStep == 1) {
           if ([
-            "btech",
-            "bpharma",
-            "dpharma",
+            "ENGINEERING",
+            "MATH",
+            "COMPUTER-SCIENCE",
           ].contains(finalCourse)) {
             context
                 .read<RegisterFormBloc>()
                 .add(RegisterFormEvent.courseChanged(finalCourse));
 
             setState(() {
-              if (finalCourse == "btech") {
+              if (finalCourse == "ENGINEERING") {
                 _currentStep += 1;
               } else {
                 _currentStep += 2;
-                finalCourse == "bpharma"
-                    ? finalBranch = "bpharma"
-                    : finalBranch = "dpharma";
+                finalCourse == "MATH"
+                    ? finalBranch = "MATH"
+                    : finalBranch = "COMPUTER-SCIENCE";
               }
             });
           }

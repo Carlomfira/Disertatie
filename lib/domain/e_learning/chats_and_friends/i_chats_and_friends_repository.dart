@@ -10,7 +10,6 @@ import 'package:kt_dart/kt.dart';
 abstract class IChatsAndFriendsRepository {
   /// In this method we will watch the students who are in same branch and year
   ///
-  /// We need 3 things  course year and branch where branch is optional field bcs bpharma and
   ///
   /// does not have any branch
 

@@ -266,7 +266,7 @@ class _UsersQuestionsState extends State<UsersQuestions> {
                                     ),
                                   ),
                                   Text(
-                                    "", //Todo:(Amit) will add this feature soon..
+                                    "", //Todo
                                     style: Apptheme(context)
                                         .lightboldText
                                         .copyWith(
@@ -307,7 +307,7 @@ class _UsersQuestionsState extends State<UsersQuestions> {
                                     ),
                                   ),
                                   Text(
-                                    "", //Todo:(Amit) will add comment no feature soon..
+                                    "", //Todo
                                     style: Apptheme(context)
                                         .lightboldText
                                         .copyWith(fontSize: 10.sp),

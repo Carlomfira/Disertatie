@@ -101,7 +101,7 @@ class _ProfileoptionState extends State<Profileoption> {
                       ),
                 ),
                 onTap: () {
-                  openUrl('mailto:amitsingh506142@gmail.com');
+                  openUrl('mailto:viorelalin238@gmail.com');
                 },
               ),
               SizedBox(height: 5.h),

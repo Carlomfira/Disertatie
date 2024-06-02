@@ -2403,6 +2403,7 @@ class _$InvalidPhoneNumberImpl<T>
   }
 }
 
+//------------------------------------
 abstract class InvalidPhoneNumber<T> implements ValueFailure<T> {
   const factory InvalidPhoneNumber(final T failedValue) =
       _$InvalidPhoneNumberImpl<T>;

@@ -45,7 +45,7 @@ Either<ValueFailure<String>, String> validateStringNotEmpty(String input) {
 
 Either<ValueFailure<String>, String> validatePhoneNumber(String input) {
   //this is standard phone number validation regex for India
-  const phoneRegex = r"^[6-9]\d{9}$";
+  const phoneRegex = r'^07\d{8}$';
   if (RegExp(phoneRegex).hasMatch(input)) {
     return right(input);
   } else {
@@ -100,7 +100,7 @@ Either<ValueFailure<String>, String> validateCollege(String input) {
 }
 
 Either<ValueFailure<String>, String> validateCourse(String input) {
-  if (["btech", "dpharma", "bpharma"].contains(input)) {
+  if (["ENGINEERING", "MATH", "COMPUTER-SCIENCE"].contains(input)) {
     return right(input);
   } else {
     return left(ValueFailure.empty(input));

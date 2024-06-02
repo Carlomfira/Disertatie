@@ -68,10 +68,8 @@ void main() {
       expect(find.text('Login'), findsOneWidget);
       expect(find.byKey(emailKey), findsOneWidget);
 
-      await tester.enterText(find.byKey(emailKey), 'amit.singh@kuhoo.com');
       await tester.pump();
       expect(find.byKey(passwordKey), findsOneWidget);
-      await tester.enterText(find.byKey(passwordKey), 'Singh@6391');
       await tester.pump();
 
       await tester.tap(find.byType(ElevatedButton));

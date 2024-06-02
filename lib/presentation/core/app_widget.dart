@@ -17,7 +17,7 @@ class AppWidget extends StatelessWidget {
         child: MaterialApp.router(
           routerDelegate: _appRouter.delegate(),
           routeInformationParser: _appRouter.defaultRouteParser(),
-          title: 'Academic master',
+          title: 'Learn Link',
           debugShowCheckedModeBanner: false,
           theme: Apptheme.theme,
           builder: (context, child) => ResponsiveBreakpoints.builder(

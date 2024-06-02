@@ -199,9 +199,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         ),
                         CustomDropDownButton(
                           items: const [
-                            "btech",
-                            "bpharma",
-                            "dpharma",
+                            "ENGINEERING",
+                            "MATH",
+                            "COMPUTER-SCIENCE",
                           ],
                           hintText: value.users.first.course
                               .getorCrash()

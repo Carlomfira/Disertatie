@@ -24,30 +24,23 @@ class ChatRoomPage extends StatefulWidget {
 
 class _ChatRoomPageState extends State<ChatRoomPage> {
   final userWatcherBloc = getIt<UsersWatcherBloc>();
-
   final watchAllUsersInOurClass = getIt<WatchAllUsersInOurClassBloc>();
-
   final watchAllChatrooms = getIt<AllChatroomWatcherBloc>();
 
   @override
   void initState() {
-    userWatcherBloc.add(
-      const UsersWatcherEvent.watchCurrentUser(),
-    );
-    watchAllChatrooms.add(const AllChatroomWatcherEvent.watchAllChatrooms());
     super.initState();
+    userWatcherBloc.add(const UsersWatcherEvent.watchCurrentUser());
+    watchAllChatrooms.add(const AllChatroomWatcherEvent.watchAllChatrooms());
   }
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    watchAllChatrooms.add(const AllChatroomWatcherEvent.watchAllChatrooms());
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
-    watchAllChatrooms.add(const AllChatroomWatcherEvent.watchAllChatrooms());
     final Size size = MediaQuery.of(context).size;
 
     return Padding(
@@ -60,150 +53,152 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Friends",
-                style: Apptheme(context).lightboldText.copyWith(
-                      color: Apptheme.primaryColor,
-                      fontSize: 22,
-                    ),
-              ),
-            ),
+            _buildHeader("Friends"),
             const SizedBox(height: 10),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: BlocConsumer<UsersWatcherBloc, UsersWatcherState>(
-                listener: (context, state) {
-                  state.mapOrNull(
-                    loadSuccess: (value) {
-                      watchAllUsersInOurClass.add(
-                        WatchAllUsersInOurClassEvent
-                            .watchAllUsersInOurClassEvent(
-                          value.users.first.course.getorCrash(),
-                          value.users.first.branch.getorCrash(),
-                          value.users.first.year.getorCrash(),
-                        ),
-                      );
-                    },
-                  );
-                },
-                bloc: userWatcherBloc,
-                builder: (context, state) {
-                  return state.map(
-                    empty: (value) => const ErrorCard(),
-                    loadFailure: (value) => const ErrorCard(),
-                    loadInProgress: (value) => CircleLoading(),
-                    loadSuccess: (value) {
-                      return BlocBuilder<WatchAllUsersInOurClassBloc,
-                          WatchAllUsersInOurClassState>(
-                        bloc: watchAllUsersInOurClass,
-                        builder: (context, state) {
-                          return state.map(
-                            empty: (value) => const Text("Empty"),
-                            loadFailure: (value) => const ErrorCard(),
-                            initial: (value) => CircleLoading(),
-                            loadInProgress: (value) => CircleLoading(),
-                            loadSuccess: (ourClassUsers) {
-                              return Row(
-                                children: [
-                                  for (int i = 0;
-                                      i < ourClassUsers.users.length;
-                                      i++)
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                        right: rightpadding - 10,
-                                      ),
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          AutoRouter.of(context).push(
-                                            PersonalChatScreen(
-                                              partnerId: ourClassUsers
-                                                  .users[i].id
-                                                  .getorCrash(),
-                                            ),
-                                          );
-                                        },
-                                        child: Userdp(
-                                          userName: ourClassUsers.users[i].name
-                                              .getorCrash(),
-                                        ),
-                                      ),
-                                    ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                      );
-                    },
-                    initial: (value) => CircleLoading(),
-                  );
-                },
-              ),
-            ),
+            _buildFriendsList(),
             SizedBox(height: size.height * 0.1 / 4),
-            Container(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Conversations",
-                style: Apptheme(context).lightboldText.copyWith(
-                      color: Apptheme.primaryColor,
-                      fontSize: 22,
-                    ),
-              ),
-            ),
+            _buildHeader("Conversations"),
             SizedBox(height: size.height * 0.1 / 4),
-            BlocBuilder<AllChatroomWatcherBloc, AllChatroomWatcherState>(
-              bloc: watchAllChatrooms,
-              builder: (context, state) {
-                return state.map(
-                  empty: (value) => const EmptyScreen(
-                    message:
-                        "You don't have any personal chats,send one to one msg and clear your doubts!",
-                    showLottie: true,
-                  ),
-                  loadFailure: (value) => const ErrorCard(),
-                  initial: (value) => Center(child: CircleLoading()),
-                  loadInProgress: (value) => Center(child: FindLoading()),
-                  loadSuccess: (chatrooms) {
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      padding: EdgeInsets.zero,
-                      itemCount: chatrooms.chatrooms.size,
-                      itemBuilder: (BuildContext context, int index) {
-                        return InkWell(
-                          onTap: () {
-                            AutoRouter.of(context).push(
-                              PersonalChatScreen(
-                                partnerId: chatrooms.chatrooms[index].partnerId
-                                    .getorCrash(),
-                              ),
-                            );
-                          },
-                          child: MessageCard(
-                            currentMsg: size.width > 330
-                                ? chatrooms.chatrooms[index].chatroomDescription
-                                    .getorCrash()
-                                : chatrooms.chatrooms[index].chatroomDescription
-                                    .getorCrash(),
-                            friendDp: ceoDp,
-                            friendId: chatrooms.chatrooms[index].partnerId
-                                .getorCrash(),
-                            time: chatrooms.chatrooms[index].chatroomAt
-                                .getorCrash()
-                                .substring(0, 16),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                );
-              },
-            ),
+            _buildChatroomsList(size),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildHeader(String title) {
+    return Container(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        title,
+        style: Apptheme(context).lightboldText.copyWith(
+              color: Apptheme.primaryColor,
+              fontSize: 22,
+            ),
+      ),
+    );
+  }
+
+  Widget _buildFriendsList() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: BlocConsumer<UsersWatcherBloc, UsersWatcherState>(
+        listener: (context, state) {
+          state.maybeMap(
+            loadSuccess: (value) {
+              watchAllUsersInOurClass.add(
+                WatchAllUsersInOurClassEvent.watchAllUsersInOurClassEvent(
+                  value.users.first.course.getorCrash(),
+                  value.users.first.branch.getorCrash(),
+                  value.users.first.year.getorCrash(),
+                ),
+              );
+            },
+            orElse: () {},
+          );
+        },
+        bloc: userWatcherBloc,
+        builder: (context, state) {
+          return state.map(
+            empty: (value) => const ErrorCard(),
+            loadFailure: (value) => const ErrorCard(),
+            loadInProgress: (value) => CircleLoading(),
+            loadSuccess: (value) {
+              return BlocBuilder<WatchAllUsersInOurClassBloc,
+                  WatchAllUsersInOurClassState>(
+                bloc: watchAllUsersInOurClass,
+                builder: (context, state) {
+                  return state.map(
+                    empty: (value) => const Text("Empty"),
+                    loadFailure: (value) => const ErrorCard(),
+                    initial: (value) => CircleLoading(),
+                    loadInProgress: (value) => CircleLoading(),
+                    loadSuccess: (ourClassUsers) {
+                      return Row(
+                        children: ourClassUsers.users.map((user) {
+                          return Padding(
+                            padding: EdgeInsets.only(right: rightpadding - 10),
+                            child: GestureDetector(
+                              onTap: () {
+                                AutoRouter.of(context).push(
+                                  PersonalChatScreen(
+                                    partnerId: user.id.getorCrash(),
+                                  ),
+                                );
+                              },
+                              child: Column(
+                                children: [
+                                  Userdp(
+                                    userName: user.name.getorCrash(),
+                                  ),
+                                  SizedBox(height: 5),
+                                  Text(
+                                    user.name.getorCrash(),
+                                    style: TextStyle(
+                                      color: Apptheme.primaryColor,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      );
+                    },
+                  );
+                },
+              );
+            },
+            initial: (value) => CircleLoading(),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildChatroomsList(Size size) {
+    return BlocBuilder<AllChatroomWatcherBloc, AllChatroomWatcherState>(
+      bloc: watchAllChatrooms,
+      builder: (context, state) {
+        return state.map(
+          empty: (value) => const EmptyScreen(
+            message:
+                "You don't have any personal chats,send one to one msg and clear your doubts!",
+            showLottie: true,
+          ),
+          loadFailure: (value) => const ErrorCard(),
+          initial: (value) => Center(child: CircleLoading()),
+          loadInProgress: (value) => Center(child: FindLoading()),
+          loadSuccess: (chatrooms) {
+            return ListView.builder(
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              itemCount: chatrooms.chatrooms.size,
+              itemBuilder: (BuildContext context, int index) {
+                final chatroom = chatrooms.chatrooms[index];
+                return InkWell(
+                  onTap: () {
+                    AutoRouter.of(context).push(
+                      PersonalChatScreen(
+                        partnerId: chatroom.partnerId.getorCrash(),
+                      ),
+                    );
+                  },
+                  child: MessageCard(
+                    currentMsg: size.width > 330
+                        ? chatroom.chatroomDescription.getorCrash()
+                        : chatroom.chatroomDescription.getorCrash(),
+                    friendDp: ceoDp,
+                    friendId: chatroom.partnerId.getorCrash(),
+                    time: chatroom.chatroomAt.getorCrash().substring(0, 16),
+                  ),
+                );
+              },
+            );
+          },
+        );
+      },
     );
   }
 }

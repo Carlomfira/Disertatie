@@ -8,9 +8,9 @@ double topPadding1 = ScreenUtil().setHeight(50);
 double toppadding = ScreenUtil().setHeight(18);
 
 List<String> courses = [
-  "btech",
-  "bpharma",
-  "dpharma",
+  "ENGINEERING",
+  "MATH",
+  "COMPUTER-SCIENCE",
 ];
 
 List<String> branchBtech = [

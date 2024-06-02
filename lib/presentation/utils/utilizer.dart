@@ -38,7 +38,7 @@ Future<void> openUrl(String url) async {
 Future<void> sharelink() async {
   try {
     Share.share(
-      'Academic master is a fastest growing educational app for students, play store link: https://play.google.com/store/apps/details?id=com.academic.master',
+      'LearnLink is a fastest growing educational app for students.',
       subject: '.',
     );
   } catch (e) {

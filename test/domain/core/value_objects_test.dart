@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group("Email", () {
     test("email should not be null ", () {
-      const str = "amit@mail.com";
+      const str = "viorealin238@mail.com";
       final email = EmailAddress(str).isValid();
       debugPrint(email.toString());
       expect(email, true);
